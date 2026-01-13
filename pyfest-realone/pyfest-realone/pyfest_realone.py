@@ -1,7 +1,14 @@
 
-lineup = [("The Pythonistas", "Rock", 45),
-    ("Code Play", "Indie", 30),
-    ("Syntax Error", "Metal", 60)]
+bands = [name, genre, time]
+lineup = [""]
+bands.append("The Pythonistas", "Rock", 45)
+lineup.append(bands)
+bands = []
+bands.append("Code Play", "Indie", 30)
+lineup.append(bands)
+bands = []
+bands.append("Syntax Error", "Metal", 60)
+lineup.append(bands)
 
 def print_lineup(bands):
     total_time = sum[time]
@@ -33,9 +40,17 @@ if choice == 1:
 elif choice == 2:
     add_band(bands)
 
+"""
 elif choice == 3:
+    if lineup:
+        band = lineup.pop(0)
+        lineup.append(band)
+        print(f"Moved {band[0]} to the end of the lineup.")
+    else:
+        print("The lineup is currently empty.")
+
 elif choice == 4:
 elif choice == 5:
-
+"""
 elif choice == 6:
     print("Exiting Py-Fest 2026 Stage Manager. Goodbye!")

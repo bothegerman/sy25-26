@@ -1,17 +1,10 @@
 
-bands = [name, genre, time]
-lineup = [""]
-bands.append("The Pythonistas", "Rock", 45)
-lineup.append(bands)
-bands = []
-bands.append("Code Play", "Indie", 30)
-lineup.append(bands)
-bands = []
-bands.append("Syntax Error", "Metal", 60)
-lineup.append(bands)
+lineup = [("Code Play", "Indie", 30),("The Pythonistas", "Rock", 45),("Syntax Error", "Metal", 60)]
 
-def print_lineup(bands):
-    total_time = sum[time]
+
+def print_lineup():
+    for i in range(len(lineup)):
+        total_time = lineup[0,2] + lineup[1,2] + lineup[2,2] + lineup[i,2]
     print("Current Lineup: {lineup}")
     print("Total Festival Duration: {total_time} minutes")
 

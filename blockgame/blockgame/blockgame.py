@@ -47,13 +47,21 @@ while not game_over:
         # but the code below is missing something to make it "restart"
         score += 1
         print(f"Score: {score}")
-
+        enemy_pos[1] = 0  # Move back to the top
+        enemy_pos[0] = random.randint(0, WIDTH - enemy_size)
 
     # --- BUG 3: Collision Detection ---
     # This logic is mathematically incorrect for rectangular collision
     if (enemy_pos[0] == player_pos[0]) and (enemy_pos[1] == player_pos[1]):
         print("Game Over!")
         game_over = True
+    
+    if (player_pos[0] < enemy_pos[0] + enemy_size and player_pos[0] + player_size > enemy_pos[0] and 
+        player_pos[1] < enemy_pos[1] + enemy_size and player_pos[1] + player_size > enemy_pos[1]):
+        print("Game Over!")
+        game_over = True
+
+
 
     # Drawing
     screen.fill((0, 0, 0))
@@ -65,4 +73,3 @@ while not game_over:
     clock.tick(30)
 
 pygame.quit()
-

@@ -3,7 +3,7 @@ This is folder for our product!
 
 
 Tasks:
-LEOO is the tester
+LEGO is the tester
 - test if you can see book title, author, year, amount in storage, some information about the book, star rating, etc
 - can you successfully end the program?
 - when do errors occur? what are they?

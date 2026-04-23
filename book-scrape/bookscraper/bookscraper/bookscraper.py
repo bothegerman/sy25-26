@@ -2,23 +2,32 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
-books = []
-with open("library.json", "w") as f:
-    json.dump(books, f, indent=4)
 url = "https://books.toscrape.com/"
 
+# Store books here
+books = []
+
+# Rating conversion
+rating_map = {
+    "One": "1",
+    "Two": "2",
+    "Three": "3",
+    "Four": "4",
+    "Five": "5"
+}
+
+# Scrape data
 response = requests.get(url)
 soup = BeautifulSoup(response.text, 'html.parser')
-
 
 for book in soup.find_all('article', class_='product_pod'):
     title = book.h3.a['title']
     price = book.find('p', class_='price_color').text
     availability = book.find('p', class_='instock availability').text.strip()
     
-    # Rating is stored in class name (e.g. "star-rating Three")
     rating_class = book.find('p')['class']
-    rating = rating_class[1]
+    rating_word = rating_class[1]
+    rating = rating_map[rating_word]
 
     books.append({
         "title": title,
@@ -26,7 +35,46 @@ for book in soup.find_all('article', class_='product_pod'):
         "availability": availability,
         "rating": rating
     })
-# Menu
+
+# Save to JSON AFTER scraping
+with open("library.json", "w") as f:
+    json.dump(books, f, indent=4)
+
+
+# ---------------- MENU FUNCTIONS ---------------- #
+
+def view_books():
+    for b in books:
+        print(f"{b['title']} | {b['price']} | Rating: {b['rating']}")
+
+
+def search_book():
+    query = input("Enter title keyword: ").lower()
+    results = [b for b in books if query in b['title'].lower()]
+
+    if results:
+        for b in results:
+            print(f"{b['title']} | {b['price']} | Rating: {b['rating']}")
+    else:
+        print("No books found.")
+
+
+def filter_rating():
+    rating = input("Enter rating (1-5): ").strip()
+
+    if rating not in ["1", "2", "3", "4", "5"]:
+        print("Invalid rating.")
+        return
+
+    results = [b for b in books if b['rating'] == rating]
+
+    if results:
+        for b in results:
+            print(f"{b['title']} | {b['price']}")
+    else:
+        print("No books found.")
+
+
 def menu():
     while True:
         print("\n=== BOOK LIBRARY ===")
@@ -44,33 +92,12 @@ def menu():
         elif choice == "3":
             filter_rating()
         elif choice == "4":
+            print("Goodbye!")
             break
         else:
             print("Invalid choice")
-def view_books():
-    for b in books:
-        print(f"{b['title']} | {b['price']} | {b['rating']}")
-def search_book():
-    query = input("Enter title keyword: ").lower()
-    results = [b for b in books if query in b['title'].lower()]
 
-    for b in results:
-        print(f"{b['title']} | {b['price']} | {b['rating']}")
 
-    if not results:
-        print("No books found.")
-def filter_rating():
-    rating = input("Enter rating (One, Two, Three, Four, Five): ")
-
-    results = [b for b in books if b['rating'] == rating]
-
-    for b in results:
-        print(f"{b['title']} | {b['price']}")
-
-    if not results:
-        print("No books found.")
-# Test output
-for b in books:
-    print(b)
+# Run program
 if __name__ == "__main__":
     menu()

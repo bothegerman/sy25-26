@@ -1,13 +1,12 @@
-import requests
+﻿import requests
 from bs4 import BeautifulSoup
 import json
+import re
 
 url = "https://books.toscrape.com/"
 
-# Store books here
 books = []
 
-# Rating conversion
 rating_map = {
     "One": "1",
     "Two": "2",
@@ -16,13 +15,27 @@ rating_map = {
     "Five": "5"
 }
 
-# Scrape data
+# Conversion rate (update if needed)
+GBP_TO_USD = 1.25
+
+# Request page
 response = requests.get(url)
+response.encoding = 'utf-8'  # ✅ Fix encoding issue
 soup = BeautifulSoup(response.text, 'html.parser')
 
+# Scrape books
 for book in soup.find_all('article', class_='product_pod'):
     title = book.h3.a['title']
-    price = book.find('p', class_='price_color').text
+    
+    # Get raw price text
+    price_text = book.find('p', class_='price_color').text
+    
+    # ✅ Clean price (removes £, Â, etc.)
+    price_gbp = float(re.sub(r"[^\d.]", "", price_text))
+    
+    # Convert to USD
+    price_usd = round(price_gbp * GBP_TO_USD, 2)
+
     availability = book.find('p', class_='instock availability').text.strip()
     
     rating_class = book.find('p')['class']
@@ -31,12 +44,12 @@ for book in soup.find_all('article', class_='product_pod'):
 
     books.append({
         "title": title,
-        "price": price,
+        "price_usd": f"${price_usd}",
         "availability": availability,
         "rating": rating
     })
 
-# Save to JSON AFTER scraping
+# Save to JSON
 with open("library.json", "w") as f:
     json.dump(books, f, indent=4)
 
@@ -45,7 +58,7 @@ with open("library.json", "w") as f:
 
 def view_books():
     for b in books:
-        print(f"{b['title']} | {b['price']} | Rating: {b['rating']}")
+        print(f"{b['title']} | {b['price_usd']} | Rating: {b['rating']}")
 
 
 def search_book():
@@ -54,7 +67,7 @@ def search_book():
 
     if results:
         for b in results:
-            print(f"{b['title']} | {b['price']} | Rating: {b['rating']}")
+            print(f"{b['title']} | {b['price_usd']} | Rating: {b['rating']}")
     else:
         print("No books found.")
 
@@ -70,7 +83,7 @@ def filter_rating():
 
     if results:
         for b in results:
-            print(f"{b['title']} | {b['price']}")
+            print(f"{b['title']} | {b['price_usd']}")
     else:
         print("No books found.")
 
